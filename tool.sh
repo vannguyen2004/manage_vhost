@@ -45,6 +45,27 @@ backup(){
         tar -cvzf "${backup_dir}/${backup_name}" "/home/$username/"
         echo "Backup thành công thư mục người dùng và database cho user ${username}"
 }
+setup_wordpress(){
+	local domain=$1
+	local user=$(grep "DocumentRoot" "/etc/apache2/sites-available/${domain}.conf" | cut -d/ -f3)
+	doc_root=$(grep "DocumentRoot" "/etc/apache2/sites-available/${domain}.conf" | awk '{print $2}')
+	if [[ -z "$(ls -A "${doc_root}")" ]];then 
+		git clone https://github.com/WordPress/WordPress.git
+		mv ./WordPress/* $doc_root
+		rm -rf ./WordPress
+		read -p "Tạo database cho. Nhập tên database: " db_name
+		mysql -e "create database ${user}_${db_name};" > /dev/null
+		if [[ $? -eq 0 ]]; then
+			#mysql -e "grant all on '${user}_${db_name}'.* to '${user}'@'%';"
+			mysql -e "GRANT ALL ON \`${user}_${db_name}\`.* TO '${user}'@'%';"
+			mysql -e "FLUSH PRIVILEGES;"
+		else
+			echo "database đã tồn tại vui lòng thử lại"
+		fi
+	else 
+		echo "Trong thư mục doc root của domain ${domain} đã tồn tại dữ liệu"
+	fi 
+}
 main(){
 while true; do
     echo -e "================ HƯỚNG DẪN CHƯƠNG TRÌNH ================="
@@ -52,6 +73,7 @@ while true; do
     echo -e "2) Cài đặt SSL Let's Encrypt cho domain"
     echo -e "3) Tạo thư mục backup (code + database)"
     echo -e "4) Cấu hình DNS Cloudflare"
+    echo -e "5) Setup Wordpress"
     echo -e "0) Thoát chương trình"
     echo -e "---------------------------------------------------------"
     read -p "👉 Vui lòng chọn một chức năng [0-4]: " choice
@@ -87,6 +109,14 @@ while true; do
     4)
             ./dns_cf.sh
             ;;
+    5)    
+         read -p  "Bạn muốn setup wordpress cho domain nào: " domain
+		 if ./check_domain_exist.sh $domain ; then
+			 setup_wordpress $domain
+		 else
+			 echo "Domain không tồn tại xin vui lòng thử lại"
+		 fi 
+		 ;;
         0)
             echo -e "👋 Thoát chương trình. Hẹn gặp lại!"
             exit 0
