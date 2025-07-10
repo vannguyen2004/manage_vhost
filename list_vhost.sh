@@ -42,7 +42,7 @@ while true; do
                 if [[ $? -eq 0 ]]; then
                         echo "Thông tin chi tiết cấu hình domain ${domain}"
                         cat result_temp
-                        rm -f result
+                        rm -f result_temp
                        if [[ -f /etc/apache2/sites-available/${domain}-le-ssl.conf ]]; then
                                cat /etc/apache2/sites-available/${domain}-le-ssl.conf
                        fi
