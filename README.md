@@ -18,4 +18,4 @@ Các chức năng sẽ được tự động hóa. Tuy nhiên vẫn cần thủ 
 vi /etc/adduser.conf
 DIR_MODE=0711
 ```
-Lý do. Mặc định khi user được tạo được cấu hình 750. KHi source web nằm ở thư mục người dùng thì các User không thể truy cập được.
+Lý do. Mặc định khi user được tạo được cấu hình 750. Khi source web nằm ở thư mục người dùng thì các User không thể truy cập được.
