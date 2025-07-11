@@ -22,7 +22,7 @@ check_user(){
 	if [[ "$username" =~ ^[a-z]{6}$ ]] && ! getent passwd "$username" > /dev/null && [[ ! -d /home/"$username" ]]; then
 		sudo adduser "${username}"
 	else 
-		echo -e "${YELLOW}⚠️  User không hợp lệ. Vui lòng kiểm tra lại!\nTên phải gồm đúng 8 ký tự chữ thường (a–z), không số, không ký tự đặc biệt và chưa tồn tại.${RESET}"
+		echo -e "${YELLOW}⚠️  User không hợp lệ. Vui lòng kiểm tra lại!\nTên phải gồm đúng 6 ký tự chữ thường (a–z), không số, không ký tự đặc biệt và chưa tồn tại.${RESET}"
 		exit 1
 	fi 
 }
